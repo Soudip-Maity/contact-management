@@ -9,7 +9,8 @@ import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-
+import { useDispatch, useSelector } from "react-redux";
+import { setFilter } from "../redux_services/filterSlice";
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -53,6 +54,8 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function SearchAppBar() {
+  const dispatch = useDispatch();
+  const filter = useSelector((state) => state.filter.value);
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -75,18 +78,25 @@ export default function SearchAppBar() {
             Contact Management System
           </Typography>
           <Select
+            value={filter}
+            onChange={(e) => dispatch(setFilter(e.target.value))}
             sx={{
               marginLeft: "20px",
               color: "white",
-              border: "1px solid white",
               height: "40px",
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: "white",
+              },
+              "& .MuiSvgIcon-root": {
+                color: "white",
+              },
             }}
           >
             <MenuItem value="all">All</MenuItem>
             <MenuItem value="Family">Family</MenuItem>
             <MenuItem value="Friend">Friend</MenuItem>
             <MenuItem value="Work">Work</MenuItem>
-            <MenuItem value="favourite"> Favourite</MenuItem>
+            <MenuItem value="favourite">⭐ Favourite</MenuItem>
           </Select>
           <Search>
             <SearchIconWrapper>

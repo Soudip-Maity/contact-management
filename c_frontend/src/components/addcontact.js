@@ -51,7 +51,7 @@ export default function Addcontact() {
 
   return (
     <div>
-      <Button onClick={handleOpen}>create contact</Button>
+      <Button onClick={handleOpen} variant="contained" color="success">➕create contact</Button>
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
@@ -66,30 +66,38 @@ export default function Addcontact() {
         }}
       >
         <Fade in={open}>
-          <Box sx={style}>
-            <div
-              style={{
-                width: "100%",
-                height: "400px",
-                backgroundColor: "pink",
-                boxSizing: "border-box",
-                color: "white",
-                margin: "0",
-                padding: "0",
-                display: "flex",
-                justifyContent: "space-between",
-                paddingLeft: "10px",
-                paddingRight: "10px",
-                gap:"10px"
-              }}
-            >
-              <form onSubmit={handlesubmit}>
+          <div
+            style={{
+              width: "100%",
+              // height: "400px",
+              // backgroundColor: "pink",
+              boxSizing: "border-box",
+              color: "white",
+              margin: "0",
+              padding: "0",
+              display: "flex",
+              justifyContent: "space-between",
+              paddingLeft: "10px",
+              paddingRight: "10px",
+            }}
+          >
+            <Box sx={style}>
+              <form
+                onSubmit={handlesubmit}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "10px",
+                }}
+                
+              >
                 <TextField
                   variant="outlined"
                   name="contactName"
                   placeholder="Name"
                   value={contact.contactName}
                   onChange={handleChange}
+                  
                 />
 
                 <TextField
@@ -124,8 +132,8 @@ export default function Addcontact() {
                   {isLoading ? "Loading..." : "create"}
                 </Button>
               </form>
-            </div>
-          </Box>
+            </Box>
+          </div>
         </Fade>
       </Modal>
     </div>

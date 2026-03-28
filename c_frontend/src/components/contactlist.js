@@ -6,12 +6,16 @@ import {
 } from "../redux_services/apiEndpoints";
 import Button from "@mui/material/Button";
 import Input from "@mui/material/Input";
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
+import { styled } from "@mui/material/styles";
+import { useSelector } from "react-redux";
 
 export default function Contactlist() {
   const { data } = useGetcontactsQuery();
   const [deletecontact] = useDeletecontactsMutation();
   const [editcontact] = useEditcontactsMutation();
-
+  const filter = useSelector((state) => state.filter.value);
   const [form, setform] = useState({
     contactName: "",
     contactEmail: "",
@@ -22,7 +26,9 @@ export default function Contactlist() {
 
   const [editid, seteditid] = useState("");
 
- const handlechange = (e) => { setform({ ...form, [e.target.name]: e.target.value }); };
+  const handlechange = (e) => {
+    setform({ ...form, [e.target.name]: e.target.value });
+  };
 
   const handlesetedit = (item) => {
     seteditid(item.id);
@@ -66,22 +72,43 @@ export default function Contactlist() {
     }
   };
 
+  const DemoPaper = styled(Paper)(({ theme }) => ({
+    width: "100%",
+    padding: theme.spacing(2),
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: "10px",
+    flexWrap: "wrap",
+    boxSizing: "border-box",
+  }));
+
+  /////////this part is from chat gpt
+
+  const filteredData = data?.filter((item) => {
+    if (filter === "all") return true;
+    if (filter === "favourite") return item.isFavourite;
+    return item.contactType === filter;
+  });
+
   return (
-    <div
-      style={{
-        width: "50%",
-        height: "600px",
-        backgroundColor: "purple",
+    <Box
+      sx={{
+        width: "80%",
+        display: "flex",
+        flexDirection: "column",
+        gap: 2,
+        padding: 2,
+        backgroundColor: "maroon",
         boxSizing: "border-box",
-        color: "white",
-        margin: "0",
-        padding: "10px",
+        overflow: "auto",
       }}
     >
-      {data && data.length > 0 ? (
-        data.map((item) =>
+      {filteredData && filteredData.length > 0 ? (
+        filteredData.map((item) =>
           editid === item.id ? (
-            <div
+            <DemoPaper
+              variant="outlined"
               key={item.id}
               style={{ display: "flex", justifyContent: "space-between" }}
             >
@@ -109,9 +136,10 @@ export default function Contactlist() {
               <Button variant="contained" onClick={() => seteditid("")}>
                 cancil
               </Button>
-            </div>
+            </DemoPaper>
           ) : (
-            <div
+            <DemoPaper
+              variant="outlined"
               key={item.id}
               style={{ display: "flex", justifyContent: "space-between" }}
             >
@@ -150,12 +178,12 @@ export default function Contactlist() {
               >
                 delete
               </Button>
-            </div>
+            </DemoPaper>
           ),
         )
       ) : (
         <p>No Data Found</p>
       )}
-    </div>
+    </Box>
   );
 }
