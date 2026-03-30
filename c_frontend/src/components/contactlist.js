@@ -16,6 +16,7 @@ export default function Contactlist() {
   const [deletecontact] = useDeletecontactsMutation();
   const [editcontact] = useEditcontactsMutation();
   const filter = useSelector((state) => state.filter.value);
+   const search = useSelector((state) => state.filter.search);
   const [form, setform] = useState({
     contactName: "",
     contactEmail: "",
@@ -91,6 +92,16 @@ export default function Contactlist() {
     return item.contactType === filter;
   });
 
+
+  const finalData = filteredData?.filter((item) => {
+  if (!search) return true;
+
+  return (
+    item.contactName?.includes(search) ||
+    item.contactNumber?.includes(search)
+  );
+});
+
   return (
     <Box
       sx={{
@@ -104,8 +115,8 @@ export default function Contactlist() {
         overflow: "auto",
       }}
     >
-      {filteredData && filteredData.length > 0 ? (
-        filteredData.map((item) =>
+      {finalData && finalData.length > 0 ? (
+        finalData.map((item) =>
           editid === item.id ? (
             <DemoPaper
               variant="outlined"

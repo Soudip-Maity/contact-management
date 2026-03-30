@@ -10,7 +10,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import { useDispatch, useSelector } from "react-redux";
-import { setFilter } from "../redux_services/filterSlice";
+import { setFilter, setSearch } from "../redux_services/filterSlice";
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -56,6 +56,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 export default function SearchAppBar() {
   const dispatch = useDispatch();
   const filter = useSelector((state) => state.filter.value);
+  const search = useSelector((state) => state.filter.search);
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -93,9 +94,9 @@ export default function SearchAppBar() {
             }}
           >
             <MenuItem value="all">All</MenuItem>
-            <MenuItem value="Family">Family</MenuItem>
-            <MenuItem value="Friend">Friend</MenuItem>
-            <MenuItem value="Work">Work</MenuItem>
+            <MenuItem value="Family">👨‍👩‍👧‍👦 Family</MenuItem>
+            <MenuItem value="Friend">🧑‍🤝‍🧑 Friend</MenuItem>
+            <MenuItem value="Work">🏢 Work</MenuItem>
             <MenuItem value="favourite">⭐ Favourite</MenuItem>
           </Select>
           <Search>
@@ -105,6 +106,8 @@ export default function SearchAppBar() {
             <StyledInputBase
               placeholder="Search…"
               inputProps={{ "aria-label": "search" }}
+              value={search}
+              onChange={(e) => dispatch(setSearch(e.target.value))}
             />
           </Search>
         </Toolbar>

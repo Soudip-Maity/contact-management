@@ -22,5 +22,5 @@ app.use("/",router)
 app.listen(port,async ()=>{
      console.log(`server is running on the port ${port}`);
      await dbconnection();
-     await sequelize.sync();
+     await sequelize.sync({ alter: true });
 }) 
