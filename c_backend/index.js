@@ -4,7 +4,7 @@ const { dbconnection, sequelize } = require("./config/dbconnection");
 const { contactmodel } = require("./models/contactmodel");
 const cors = require("cors"); 
 const { FORCE } = require("sequelize/lib/index-hints");
-
+require("dotenv").config();
 const app = express();
 
 app.use(cors()); 

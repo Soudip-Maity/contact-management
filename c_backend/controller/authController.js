@@ -1,22 +1,29 @@
 const { User } = require("../models/usermodel");
-
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
-    const exist = User.findOne({ where: { email } });
+    const exist = await User.findOne({ where: { email } });
     if (exist) {
       return res.status(400).json({ msg: "Email already exists" });
     }
     const hashedpassword = await bcrypt.hash(password, 10);
-    await User.create({
+    const user = await User.create({
       name,
       email,
       password: hashedpassword,
     });
 
-    res.json({ msg: "User registered" });
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
+
+    console.log("JWT 👉", process.env.JWT_SECRET);
+
+    res.json({ msg: "User registered", token });
   } catch (error) {
-    console.log(error);
+    console.log("ERROR : ", error);
     res.status(500).json({ msg: "Server error: " });
   }
 };
@@ -32,13 +39,12 @@ const login = async (req, res) => {
     const passmatch = await bcrypt.compare(password, user.password);
     if (!passmatch) return res.status(400).json({ msg: "Wrong password" });
 
-     const token = jwt.sign(
-        { id: user.id },
-          process.env.JWT_SECRET, {
-          expiresIn: "1d",
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
     });
-     res.json({ token });
+    res.json({ token });
   } catch (error) {
+    console.log("LOGIN ERROR ", error);
     res.status(500).json({ msg: "Server error: " });
   }
 };
