@@ -49,93 +49,145 @@ export default function Addcontact() {
     }
   };
 
-  return (
-    <div>
-      <Button onClick={handleOpen} variant="contained" color="success">➕create contact</Button>
-      <Modal
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
-        open={open}
-        onClose={handleClose}
-        closeAfterTransition
-        slots={{ backdrop: Backdrop }}
-        slotProps={{
-          backdrop: {
-            timeout: 500,
-          },
-        }}
-      >
-        <Fade in={open}>
-          <div
-            style={{
-              width: "100%",
-              // height: "400px",
-              // backgroundColor: "pink",
-              boxSizing: "border-box",
-              color: "white",
-              margin: "0",
-              padding: "0",
-              display: "flex",
-              justifyContent: "space-between",
-              paddingLeft: "10px",
-              paddingRight: "10px",
+ 
+return (
+  <>
+    <Button
+      variant="contained"
+      onClick={handleOpen}
+      sx={{
+        bgcolor: "#4f46e5",
+        textTransform: "none",
+        borderRadius: 2,
+        px: 2,
+        py: 1,
+        fontWeight: 650,
+        boxShadow: "none",
+        "&:hover": { bgcolor: "#4338ca", boxShadow: "none" },
+      }}
+    >
+      + Add Contact
+    </Button>
+
+    <Modal
+      open={open}
+      onClose={handleClose}
+      closeAfterTransition
+      slots={{ backdrop: Backdrop }}
+      slotProps={{ backdrop: { timeout: 300 } }}
+    >
+      <Fade in={open}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: { xs: "92%", sm: 440 },
+            maxHeight: "90vh",
+            overflowY: "auto",
+            bgcolor: "#fff",
+            border: "1px solid #e5eaf2",
+            borderRadius: 4,
+            p: { xs: 2.5, sm: 3.5 },
+            boxShadow: "0 24px 80px rgba(22,34,58,0.20)",
+            outline: "none",
+          }}
+        >
+          <h2 className="cms-modal-title">Create a contact</h2>
+          <p className="cms-modal-subtitle">
+            Add someone's details to your contact directory.
+          </p>
+
+          <form
+            onSubmit={async (e) => {
+              await handlesubmit(e);
             }}
+            style={{ display: "flex", flexDirection: "column", gap: 16 }}
           >
-            <Box sx={style}>
-              <form
-                onSubmit={handlesubmit}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "10px",
-                }}
-                
+            <label className="cms-file-input">
+              Profile image
+              <input
+                type="file"
+                accept="image/*"
+                style={{ display: "block", marginTop: 10, maxWidth: "100%" }}
+              />
+            </label>
+
+            <TextField
+              name="contactName"
+              label="Full name"
+              placeholder="Enter full name"
+              value={contact.contactName}
+              onChange={handleChange}
+              fullWidth
+              required
+            />
+
+            <TextField
+              name="contactEmail"
+              label="Email address"
+              type="email"
+              placeholder="name@example.com"
+              value={contact.contactEmail}
+              onChange={handleChange}
+              fullWidth
+            />
+
+            <TextField
+              name="contactNumber"
+              label="Phone number"
+              placeholder="Enter phone number"
+              value={contact.contactNumber}
+              onChange={handleChange}
+              fullWidth
+            />
+
+            <Select
+              name="contactType"
+              value={contact.contactType}
+              onChange={handleChange}
+              displayEmpty
+              fullWidth
+            >
+              <MenuItem value="" disabled>
+                Select contact category
+              </MenuItem>
+              <MenuItem value="Family">Family</MenuItem>
+              <MenuItem value="Friend">Friend</MenuItem>
+              <MenuItem value="Work">Work</MenuItem>
+            </Select>
+
+            <Box sx={{ display: "flex", gap: 1.5, mt: 1 }}>
+              <Button
+                variant="outlined"
+                onClick={handleClose}
+                fullWidth
+                sx={{ textTransform: "none", borderRadius: 2 }}
               >
-                <TextField
-                  variant="outlined"
-                  name="contactName"
-                  placeholder="Name"
-                  value={contact.contactName}
-                  onChange={handleChange}
-                  
-                />
+                Cancel
+              </Button>
 
-                <TextField
-                  id="outlined-basic"
-                  variant="outlined"
-                  name="contactEmail"
-                  placeholder="Email"
-                  value={contact.contactEmail}
-                  onChange={handleChange}
-                />
-
-                <TextField
-                  variant="outlined"
-                  name="contactNumber"
-                  placeholder="Phone"
-                  value={contact.contactNumber}
-                  onChange={handleChange}
-                />
-
-                <Select
-                  name="contactType"
-                  value={contact.contactType}
-                  onChange={handleChange}
-                  fullWidth
-                >
-                  <MenuItem value="Family">Family</MenuItem>
-                  <MenuItem value="Friend">Friend</MenuItem>
-                  <MenuItem value="Work">Work</MenuItem>
-                </Select>
-
-                <Button type="submit" disabled={isLoading} variant="contained">
-                  {isLoading ? "Loading..." : "create"}
-                </Button>
-              </form>
+              <Button
+                type="submit"
+                variant="contained"
+                disabled={isLoading}
+                fullWidth
+                sx={{
+                  bgcolor: "#4f46e5",
+                  textTransform: "none",
+                  borderRadius: 2,
+                  boxShadow: "none",
+                }}
+              >
+                {isLoading ? "Creating..." : "Create Contact"}
+              </Button>
             </Box>
-          </div>
-        </Fade>
-      </Modal>
-    </div>
-  );
+          </form>
+        </Box>
+      </Fade>
+    </Modal>
+  </>
+);
+
 }

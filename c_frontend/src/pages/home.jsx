@@ -1,13 +1,11 @@
-import React from "react";
+
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import SearchAppBar from "../components/searchbar";
 import Contactlist from "../components/contactlist";
-import Addcontact from "../components/addcontact";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 
 export default function Home() {
-
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -16,37 +14,22 @@ export default function Home() {
       navigate("/login");
     }
   }, []);
+
   return (
-    <div
-      style={{
-        width: "100%",
-        height: "100vh",
-        backgroundColor: "black",
-        boxSizing: "border-box",
-        color: "white",
-        margin: "0",
-        padding: "0",
-      }}
-    >
+    <div className="cms-page">
       <SearchAppBar />
-      <div
-        style={{
-          width: "100%",
-          height: "100vh",
-          backgroundColor: "black",
-          boxSizing: "border-box",
-          color: "white",
-          margin: "0",
-          padding: "0",
-          display: "flex",
-          justifyContent: "space-between",
-          paddingLeft: "10px",
-          paddingRight: "10px",
-        }}
-      >
+
+      <main className="cms-content">
+        <div style={{ marginBottom: 26 }}>
+          <h1 className="cms-heading">Contact Directory</h1>
+          <p className="cms-subtitle">
+            Manage your contacts, organize relationships, and
+            keep your important information in one place.
+          </p>
+        </div>
+
         <Contactlist />
-        <Addcontact />
-      </div>
+      </main>
     </div>
   );
 }

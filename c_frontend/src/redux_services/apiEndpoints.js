@@ -13,7 +13,9 @@ export const apiEndpoints = createApi({
       return headers;
     },
   }),
+  
   tagTypes: ["contact"],
+
   endpoints: (builder) => ({
 
 
@@ -74,3 +76,11 @@ export const {
   useRegisterMutation,
   useLoginMutation,
 } = apiEndpoints;
+
+
+
+
+
+
+
+

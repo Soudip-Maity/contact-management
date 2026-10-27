@@ -11,6 +11,10 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import { useDispatch, useSelector } from "react-redux";
 import { setFilter, setSearch } from "../redux_services/filterSlice";
+import Button from "@mui/material/Button";
+import { useNavigate } from "react-router-dom";
+import CsvExport from "./CsvExport";
+import Addcontact from "./addcontact";
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -57,61 +61,120 @@ export default function SearchAppBar() {
   const dispatch = useDispatch();
   const filter = useSelector((state) => state.filter.value);
   const search = useSelector((state) => state.filter.search);
-  return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
+  const navigate = useNavigate();
+  const handlelogout = () => {
+    localStorage.clear();
+    navigate("/login");
+  };
+ 
+return (
+  <Box sx={{ flexGrow: 0 }}>
+    <AppBar
+      position="static"
+      elevation={0}
+      sx={{
+        bgcolor: "#ffffff",
+        color: "#172033",
+        borderBottom: "1px solid #e5eaf2",
+      }}
+    >
+      <Toolbar
+        sx={{
+          minHeight: "76px !important",
+          px: { xs: 2, md: 4 },
+          gap: 2,
+          flexWrap: "wrap",
+          py: 1.5,
+        }}
+      >
+        <Box sx={{ flexGrow: 1, minWidth: 150 }}>
           <Typography
             variant="h6"
-            noWrap
-            component="div"
-            sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
+            sx={{ fontWeight: 800, letterSpacing: -0.5 }}
           >
-            Contact Management System
+            <Box component="span" sx={{ color: "#4f46e5" }}>
+              Contact
+            </Box>{" "}
+            Manager
           </Typography>
-          <Select
-            value={filter}
-            onChange={(e) => dispatch(setFilter(e.target.value))}
+
+          <Typography
+            variant="caption"
+            sx={{ color: "#788398" }}
+          >
+            Workspace / Contacts
+          </Typography>
+        </Box>
+
+        <Search
+          sx={{
+            bgcolor: "#f5f7fb",
+            border: "1px solid #e5eaf2",
+            borderRadius: 2,
+            width: { xs: "100%", sm: 220, md: 260 },
+            order: { xs: 3, sm: 0 },
+            "&:hover": { bgcolor: "#eef2ff" },
+          }}
+        >
+          <SearchIconWrapper>
+            <SearchIcon sx={{ color: "#788398" }} />
+          </SearchIconWrapper>
+
+          <StyledInputBase
+            placeholder="Search contacts..."
+            inputProps={{ "aria-label": "search contacts" }}
+            value={search}
+            onChange={(e) => dispatch(setSearch(e.target.value))}
             sx={{
-              marginLeft: "20px",
-              color: "white",
-              height: "40px",
-              "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: "white",
-              },
-              "& .MuiSvgIcon-root": {
-                color: "white",
+              color: "#172033",
+              "& .MuiInputBase-input": {
+                width: "100%",
+                padding: "10px 10px 10px 42px",
               },
             }}
-          >
-            <MenuItem value="all">All</MenuItem>
-            <MenuItem value="Family">👨‍👩‍👧‍👦 Family</MenuItem>
-            <MenuItem value="Friend">🧑‍🤝‍🧑 Friend</MenuItem>
-            <MenuItem value="Work">🏢 Work</MenuItem>
-            <MenuItem value="favourite">⭐ Favourite</MenuItem>
-          </Select>
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ "aria-label": "search" }}
-              value={search}
-              onChange={(e) => dispatch(setSearch(e.target.value))}
-            />
-          </Search>
-        </Toolbar>
-      </AppBar>
-    </Box>
-  );
+          />
+        </Search>
+
+        <Select
+          value={filter}
+          onChange={(e) => dispatch(setFilter(e.target.value))}
+          size="small"
+          aria-label="Filter contacts"
+          sx={{
+            minWidth: 140,
+            bgcolor: "#ffffff",
+            borderRadius: 2,
+            fontSize: 13,
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#e0e6f0",
+            },
+          }}
+        >
+          <MenuItem value="all">All Contacts</MenuItem>
+          <MenuItem value="Family">Family</MenuItem>
+          <MenuItem value="Friend">Friends</MenuItem>
+          <MenuItem value="Work">Work</MenuItem>
+          <MenuItem value="favourite">⭐ Favourites</MenuItem>
+        </Select>
+
+        <Addcontact />
+        <CsvExport />
+
+        <Button
+          variant="outlined"
+          color="error"
+          onClick={handlelogout}
+          sx={{
+            textTransform: "none",
+            borderRadius: 2,
+            fontWeight: 650,
+          }}
+        >
+          Logout
+        </Button>
+      </Toolbar>
+    </AppBar>
+  </Box>
+);
+
 }

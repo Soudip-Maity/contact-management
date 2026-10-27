@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   useDeletecontactsMutation,
   useEditcontactsMutation,
@@ -16,7 +16,7 @@ export default function Contactlist() {
   const [deletecontact] = useDeletecontactsMutation();
   const [editcontact] = useEditcontactsMutation();
   const filter = useSelector((state) => state.filter.value);
-   const search = useSelector((state) => state.filter.search);
+  const search = useSelector((state) => state.filter.search);
   const [form, setform] = useState({
     contactName: "",
     contactEmail: "",
@@ -26,7 +26,9 @@ export default function Contactlist() {
   });
 
   const [editid, seteditid] = useState("");
-
+  const [file, setfile] = useState();
+  const [page, setPage] = useState(1);
+  const limit = 5;
   const handlechange = (e) => {
     setform({ ...form, [e.target.name]: e.target.value });
   };
@@ -79,9 +81,17 @@ export default function Contactlist() {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: "10px",
+    gap: "12px",
     flexWrap: "wrap",
     boxSizing: "border-box",
+    border: "1px solid #e5eaf2",
+    borderRadius: "12px",
+    boxShadow: "0 2px 8px rgba(22,34,58,0.025)",
+    backgroundColor: "#fff",
+    [theme.breakpoints.down("sm")]: {
+      alignItems: "flex-start",
+      padding: theme.spacing(1.5),
+    },
   }));
 
   /////////this part is from chat gpt
@@ -91,38 +101,59 @@ export default function Contactlist() {
     if (filter === "favourite") return item.isFavourite;
     return item.contactType === filter;
   });
-
-
+  //////////////////////////////////////
   const finalData = filteredData?.filter((item) => {
-  if (!search) return true;
+    if (!search) return true;
 
-  return (
-    item.contactName?.includes(search) ||
-    item.contactNumber?.includes(search)
-  );
-});
+    return (
+      item.contactName?.includes(search) || item.contactNumber?.includes(search)
+    );
+  });
+
+  const handlefile = (e) => {
+    setfile(e.target.files[0]);
+  };
+
+  const startIndex = (page - 1) * limit;
+  const endIndex = startIndex + limit;
+  const paginatedData = finalData?.slice(startIndex, endIndex);
+
+  const totalPages = Math.ceil((finalData?.length || 0) / limit);
+
+  //////////
+  useEffect(() => {
+    setPage(1);
+  }, [search, filter]);
 
   return (
     <Box
       sx={{
-        width: "80%",
+        width: "100%",
         display: "flex",
         flexDirection: "column",
         gap: 2,
-        padding: 2,
-        backgroundColor: "maroon",
         boxSizing: "border-box",
-        overflow: "auto",
       }}
     >
-      {finalData && finalData.length > 0 ? (
-        finalData.map((item) =>
+      {paginatedData && paginatedData.length > 0 ? (
+        paginatedData.map((item) =>
           editid === item.id ? (
             <DemoPaper
               variant="outlined"
               key={item.id}
               style={{ display: "flex", justifyContent: "space-between" }}
             >
+              <form
+                style={{
+                  width: "60px",
+                  height: "60px",
+                  backgroundColor: "black",
+                  borderRadius: "50%",
+                }}
+                enctype="multipart/form-data"
+              >
+                <input type="file" onChange={handlefile} />
+              </form>
               <Input
                 name="contactName"
                 placeholder="name"
@@ -152,31 +183,63 @@ export default function Contactlist() {
             <DemoPaper
               variant="outlined"
               key={item.id}
-              style={{ display: "flex", justifyContent: "space-between" }}
+              sx={{}}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "16px",
+                padding: "16px",
+              }}
             >
-              <p
-                style={{ cursor: "pointer" }}
+              <Button
+                aria-label={
+                  item.isFavourite
+                    ? "Remove from favourites"
+                    : "Add to favourites"
+                }
                 onClick={() => toggleFavourite(item)}
+                sx={{
+                  minWidth: 40,
+                  width: 40,
+                  height: 40,
+                  borderRadius: 2,
+                  fontSize: 21,
+                  color: item.isFavourite ? "#e5a000" : "#94a0b4",
+                  bgcolor: item.isFavourite ? "#fff8df" : "#f5f7fb",
+                }}
               >
-                {item.isFavourite ? "⭐" : "☆"}
-              </p>
-              <p>{item.contactName}</p>
-              <p>{item.contactEmail}</p>
-              <p>{item.contactNumber}</p>
+                {item.isFavourite ? "★" : "☆"}
+              </Button>
+
+              <p style={{ flex: 1 }}>{item.contactName}</p>
+              <p style={{ flex: 1 }}>{item.contactEmail}</p>
+              <p style={{ width: "120px" }}>{item.contactNumber}</p>
               <select
                 value={item.contactType || ""}
                 onChange={(e) => handleTypeChange(e, item)}
+                style={{ width: "120px" }}
               >
                 <option value="">Select</option>
                 <option value="Family">Family</option>
                 <option value="Friend">Friend</option>
                 <option value="Work">Work</option>
               </select>
-              <Button variant="contained" onClick={() => handlesetedit(item)}>
-                edit
-              </Button>
               <Button
-                variant="contained"
+                variant="outlined"
+                onClick={() => handlesetedit(item)}
+                sx={{
+                  textTransform: "none",
+                  borderRadius: 2,
+                  borderColor: "#dfe5ef",
+                  color: "#4f46e5",
+                }}
+              >
+                Edit
+              </Button>
+
+              <Button
+                variant="outlined"
+                color="error"
                 onClick={async () => {
                   try {
                     await deletecontact(item.id).unwrap();
@@ -186,8 +249,9 @@ export default function Contactlist() {
                     alert(err?.data?.msg || "Delete failed");
                   }
                 }}
+                sx={{ textTransform: "none", borderRadius: 2 }}
               >
-                delete
+                Delete
               </Button>
             </DemoPaper>
           ),
@@ -195,6 +259,34 @@ export default function Contactlist() {
       ) : (
         <p>No Data Found</p>
       )}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          gap: "10px",
+          marginTop: "10px",
+        }}
+      >
+        <Button
+          variant="contained"
+          disabled={page === 1}
+          onClick={() => setPage((prev) => prev - 1)}
+        >
+          Previous
+        </Button>
+
+        <span style={{ color: "white", alignSelf: "center" }}>
+          Page {page} of {totalPages}
+        </span>
+
+        <Button
+          variant="contained"
+          disabled={page === totalPages}
+          onClick={() => setPage((prev) => prev + 1)}
+        >
+          Next
+        </Button>
+      </div>
     </Box>
   );
 }

@@ -19,7 +19,7 @@ const register = async (req, res) => {
       expiresIn: "1d",
     });
 
-    console.log("JWT 👉", process.env.JWT_SECRET);
+    console.log("JWT", process.env.JWT_SECRET);
 
     res.json({ msg: "User registered", token });
   } catch (error) {

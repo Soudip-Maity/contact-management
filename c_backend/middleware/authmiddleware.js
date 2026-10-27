@@ -12,4 +12,4 @@ module.exports = (req, res, next) => {
   } catch {
     res.status(401).json({ msg: "Invalid token" });
   }
-};
+};  

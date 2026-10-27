@@ -13,7 +13,7 @@ const port = 5000;
 
 
 app.get("/",(req,res)=>{
-    res.json({message:"backend is running on server ",port})
+    res.json({message:"backend is running on server  ",port})
 })
 
 app.use("/",router)
@@ -22,5 +22,5 @@ app.use("/",router)
 app.listen(port,async ()=>{
      console.log(`server is running on the port ${port}`);
      await dbconnection();
-     await sequelize.sync({ alter: true });
+     await sequelize.sync();
 }) 
